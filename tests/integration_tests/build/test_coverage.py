@@ -19,7 +19,7 @@ import pytest
 
 import host_tools.cargo_build as host  # pylint: disable=import-error
 
-COVERAGE_TARGET_PCT = 86.0
+COVERAGE_TARGET_PCT = 85.2
 COVERAGE_MAX_DELTA = 0.01
 
 CARGO_KCOV_REL_PATH = os.path.join(host.CARGO_BUILD_REL_PATH, 'kcov')
@@ -54,7 +54,6 @@ def test_coverage(test_session_root_path, test_session_tmp_path):
         'tests/,'
         'usr/lib/gcc,'
         'lib/x86_64-linux-gnu/,'
-        'pnet,'
         # The following files/directories are auto-generated
         'bootparam.rs,'
         'elf.rs,'

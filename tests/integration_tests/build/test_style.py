@@ -15,6 +15,10 @@ SUCCESS_CODE = 0
 
 
 @pytest.mark.timeout(120)
+@pytest.mark.skipif(
+    platform.machine() != "x86_64",
+    reason="rustfmt is not available on Rust 1.38 on aarch64"
+)
 def test_rust_style():
     """Fail if there's misbehaving Rust style in this repo."""
     # Check that the output is empty.
@@ -112,6 +116,6 @@ def check_swagger_style(yaml_spec):
 def test_firecracker_swagger():
     """Fail if Firecracker swagger specification is malformed."""
     yaml_spec = os.path.normpath(
-        os.path.join(os.getcwd(), '../api_server/swagger/firecracker.yaml')
+        os.path.join(os.getcwd(), '../src/api_server/swagger/firecracker.yaml')
     )
     check_swagger_style(yaml_spec)

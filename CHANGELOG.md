@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a logical error in bounds checking performed on vsock virtio
+  descriptors (CVE-2019-18960).
+- Fixed #1283 - Can't start a VM in AARCH64 with vcpus number more than 16.
+- The backtrace are printed on `panic`, no longer causing a seccomp fault.
+- Fixed #1375 - Change logger options type from Value to Vec<LogOption> to
+  prevent potential unwrap on None panics.
+- Raise interrupt for TX queue used descriptors - Github issue #1436
+- Fixed a bug that causes 100% cpu load when the net device rx is throttled
+  by the ratelimiter - Github issue #1439
+- Invalid fields in rate limiter related API requests are now failing with
+  a proper error message.
+
+## [0.19.0]
+
 ### Added
 
 - New command-line parameter for `firecracker`, named `--no-api`, which
@@ -20,8 +36,9 @@
 ### Changed
 
 - Vsock API call: `PUT /vsocks/{id}` changed to `PUT /vsock` and no longer
-  appear to support multiple vsock devices. Any subsequent calls to this API endpoint
-  will override the previous vsock device configuration.
+  appear to support multiple vsock devices. Any subsequent calls to this API
+  endpoint will override the previous vsock device configuration.
+- Removed unused 'Halting' and 'Halted' instance states.
 
 ### Fixed
 
@@ -29,6 +46,12 @@
 - Upon panic, the terminal is now reset to canonical mode.
 - Explicit error upon failure of vsock device creation.
 - The failure message returned by an API call is flushed in the log FIFOs.
+- Insert virtio devices in the FDT in order of their addresses sorted from
+  low to high.
+- Enforce the maximum length of the network interface name to be 16 chars as
+  specified in the Linux Kernel.
+- Changed the vsock property `id` to `vsock_id` so that the API client can be
+  successfully generated from the swagger definition.
 
 ## [0.18.0]
 
