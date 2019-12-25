@@ -5,7 +5,7 @@ info:
                The API is accessible through HTTP calls on specific URLs
                carrying JSON modeled data.
                The transport medium is a Unix Domain Socket.
-  version: 0.19.0
+  version: 0.20.0
   termsOfService: ""
   contact:
     email: "compute-capsule@amazon.com"
@@ -391,6 +391,9 @@ definitions:
       kernel_image_path:
         type: string
         description: Host level path to the kernel image used to boot the guest
+      initrd_path:
+        type: string
+        description: Host level path to the initrd image used to boot the guest
       boot_args:
         type: string
         description: Kernel boot arguments

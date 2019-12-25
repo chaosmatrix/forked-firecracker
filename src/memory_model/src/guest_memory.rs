@@ -13,7 +13,7 @@ use std::{mem, result};
 
 use guest_address::{Address, GuestAddress};
 use mmap::{self, MemoryMapping};
-use DataInit;
+use ByteValued;
 
 /// Errors associated with handling guest memory regions.
 #[derive(Debug)]
@@ -162,6 +162,15 @@ impl GuestMemory {
         self.regions.len()
     }
 
+    /// Returns the size of the region identified by passed index
+    pub fn region_size(&self, index: usize) -> Result<usize> {
+        if index >= self.regions.len() {
+            return Err(Error::NoMemoryRegions);
+        }
+
+        Ok(self.regions[index].mapping.size())
+    }
+
     /// Perform the specified action on each region's addresses.
     pub fn with_regions<F, E>(&self, cb: F) -> result::Result<(), E>
     where
@@ -276,7 +285,7 @@ impl GuestMemory {
     ///     Ok(num1 + num2)
     /// }
     /// ```
-    pub fn read_obj_from_addr<T: DataInit>(&self, guest_addr: GuestAddress) -> Result<T> {
+    pub fn read_obj_from_addr<T: ByteValued>(&self, guest_addr: GuestAddress) -> Result<T> {
         self.do_in_region(guest_addr, mem::size_of::<T>(), |mapping, offset| {
             mapping
                 .read_obj(offset)
@@ -302,7 +311,7 @@ impl GuestMemory {
     ///         .map_err(|_| ())
     /// }
     /// ```
-    pub fn write_obj_at_addr<T: DataInit>(&self, val: T, guest_addr: GuestAddress) -> Result<()> {
+    pub fn write_obj_at_addr<T: ByteValued>(&self, val: T, guest_addr: GuestAddress) -> Result<()> {
         self.do_in_region(guest_addr, mem::size_of::<T>(), move |mapping, offset| {
             mapping
                 .write_obj(val, offset)
@@ -746,5 +755,16 @@ mod tests {
             ),
             3
         );
+    }
+
+    #[test]
+    fn test_region_size() {
+        let start_addr1 = GuestAddress(0x0);
+        let start_addr2 = GuestAddress(0x1000);
+        let mem = GuestMemory::new(&[(start_addr1, 0x100), (start_addr2, 0x400)]).unwrap();
+
+        assert_eq!(mem.region_size(0).unwrap(), 0x100);
+        assert_eq!(mem.region_size(1).unwrap(), 0x400);
+        assert!(mem.region_size(2).is_err());
     }
 }
